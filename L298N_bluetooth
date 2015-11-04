@@ -2,11 +2,11 @@
 #include <MicroView.h>
 SoftwareSerial bt(0,1); // RX, TX BlueTooth serial communication pins
 
-#define COMMAND_LEFT 'a'
-#define COMMAND_RIGHT 'd'
-#define COMMAND_FORWARD 'w'
-#define COMMAND_BACK 's'
-#define COMMAND_STOP ' '
+#define GO_LEFT 'a'
+#define GO_RIGHT 'd'
+#define GO_FORWARD 'w'
+#define GO_BACK 's'
+#define STOP 'x'
 
 // connect motor controller pins to Arduino digital pins
 // motor one
@@ -29,6 +29,7 @@ pinMode(in4, OUTPUT);
 bt.begin(9600);//start the bluetooth serial port - send and recieve at 9600 baud
 uView.begin();// begin of MicroView
 uView.clear(PAGE); // clear page
+
 }
 
 void allOff(int speed)
@@ -40,6 +41,8 @@ void allOff(int speed)
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
+
+  
 }
  
 void goForward(int speed)
@@ -66,6 +69,7 @@ void goForward(int speed)
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
   analogWrite(enB, speed);
+
 }
   
   void goRight(int speed)
@@ -79,6 +83,7 @@ void goForward(int speed)
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
   analogWrite(enB, speed);
+
 }
   
   void goLeft(int speed)
@@ -96,29 +101,22 @@ void goForward(int speed)
 }
 
 void loop() {
-  unsigned long timeout = 0;
-//Stop after the timeout
-  if (millis() > timeout) {
-    allOff;
-  }
-  if(bt.available()) {
+if(bt.available()) {
 char data = (char)bt.read();
-//always reset the timeout
-timeout = millis() + 1000;
 switch(data) {
-  case COMMAND_FORWARD:
+  case GO_FORWARD:
     goForward(255);    
     break; 
-  case COMMAND_BACK:
+  case GO_BACK:
     goBackward(255);
     break;
-  case COMMAND_LEFT:
-    goLeft(200);
+  case GO_LEFT:
+    goLeft(150);
     break;
-  case COMMAND_RIGHT:
-    goRight(200);
+  case GO_RIGHT:
+    goRight(150);
     break;
-  case COMMAND_STOP:
+  case STOP:
     allOff(0);
     break;
 }
